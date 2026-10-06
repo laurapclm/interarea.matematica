@@ -1,0 +1,18 @@
+body {
+    background: #f4f6fb;
+}
+
+.titulo {
+    font-weight: 700;
+    color: #2b3a67;
+}
+
+.campo-matriz {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.card {
+    border: 0;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
