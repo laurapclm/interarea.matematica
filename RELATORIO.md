@@ -1,71 +1,99 @@
-# Relatório Técnico — Álgebra Linear em PHP
+# RELATÓRIO TÉCNICO – PROJETO ÁLGEBRA LINEAR
 
-**Disciplina:** atividade interárea (Matemática aplicada + Programação)
-**Autores:** Nome 1, Nome 2
-**Repositório:** link do GitHub
+## 1. Introdução
 
-## 1. Objetivo
+O projeto foi feito em PHP com o objetivo de criar uma aplicação que realizasse algumas operações de álgebra linear. Entre elas estão operações com matrizes e resolução de sistemas lineares.
 
-Implementar em PHP algoritmos de álgebra linear (operações com matrizes e resolução de sistemas lineares), com uma interface web simples e testes automatizados com PHPUnit.
+Além de fazer os cálculos, também foram criados testes com PHPUnit para verificar se os resultados estavam corretos e se os erros eram tratados quando alguma operação não podia ser realizada.
 
-## 2. Lógica dos algoritmos
+## 2. Organização do projeto
 
-### 2.1 Soma, subtração e escalar
-As duas matrizes precisam ter o mesmo tamanho. O resultado é calculado posição a posição: `C[i][j] = A[i][j] ± B[i][j]`. No escalar, cada elemento é multiplicado por `k`.
+O projeto foi separado em algumas pastas para facilitar a organização.
 
-### 2.2 Multiplicação
-Para `A (m x n)` e `B (n x p)` o resultado é `C (m x p)`, com `C[i][j] = soma de A[i][k] * B[k][j]` para `k` de 0 a n-1. Se o número de colunas de A for diferente do número de linhas de B, é lançada `DimensoesIncompativeisException`. Complexidade O(m·n·p).
+Na pasta `Model` ficam as classes responsáveis pelos cálculos. A classe `Matriz` possui as operações com matrizes e a classe `SistemaLinear` possui os métodos relacionados à resolução de sistemas.
 
-### 2.3 Transposta
-Troca linhas por colunas: `T[j][i] = A[i][j]`.
+Na pasta `Controller` fica o `MatrizController`, que recebe os dados da página e chama os métodos necessários para realizar cada operação.
 
-### 2.4 Determinante
-Usa eliminação de Gauss, transformando a matriz em triangular superior. O determinante é o produto da diagonal. Detalhes:
-- em cada coluna escolhemos como pivô o maior valor em módulo (pivoteamento parcial), que reduz erros numéricos;
-- cada troca de linhas multiplica o determinante por -1;
-- se o pivô for menor que `EPSILON` (1e-10), a matriz é singular e o determinante é 0.
+A pasta `View` possui a parte visual da aplicação, onde o usuário pode informar os valores e escolher o cálculo que deseja realizar.
 
-Complexidade O(n³). Foi escolhido no lugar da expansão de Laplace, que é O(n!) e inviável para matrizes maiores.
+A pasta `tests` contém os testes feitos com PHPUnit.
 
-### 2.5 Inversa (Gauss-Jordan)
-Monta a matriz aumentada `[A | I]` e aplica operações de linha até chegar em `[I | A⁻¹]`. Para cada coluna: escolhe o pivô, troca linhas se necessário, divide a linha do pivô para ele virar 1 e zera a coluna nas outras linhas. Se não houver pivô válido, a matriz é singular e lança `MatrizSingularException`. Complexidade O(n³).
+Também foi criada a pasta `Model/Exceptions`, onde ficam as exceções usadas para tratar alguns erros específicos.
 
-### 2.6 Sistema linear por Gauss
-Resolve `A·x = b` com a matriz aumentada `[A | b]`:
-1. Para cada coluna procura o pivô (maior valor em módulo da parte ainda não processada), troca de linha e elimina os valores abaixo.
-2. Se uma coluna não tem pivô, ela é pulada.
-3. Depois da eliminação, as linhas sem pivô têm todos os coeficientes zerados. Se alguma delas tem termo independente diferente de zero (`0 = c`), o sistema é **impossível**.
-4. Se o número de pivôs for menor que o número de incógnitas, o sistema é **indeterminado**.
-5. Caso contrário, a solução é única e sai por substituição regressiva, de baixo para cima.
+## 3. Operações com matrizes
 
-Esse método também aceita sistemas com mais equações do que incógnitas (desde que consistentes).
+Foram implementadas várias operações com matrizes.
 
-### 2.7 Sistema pela inversa
-Calcula `x = A⁻¹ · b`. Só funciona para matriz quadrada e invertível, por isso foi mantido como segundo método para comparação com o Gauss (um dos testes confere que os dois dão o mesmo resultado).
+A soma e a subtração são feitas elemento por elemento. Para essas operações, as duas matrizes precisam ter o mesmo tamanho.
 
-## 3. Decisões de design
+Na multiplicação de matrizes, é necessário que a quantidade de colunas da primeira matriz seja igual à quantidade de linhas da segunda.
 
-- **Organização:** seguimos a estrutura do projeto da professora. `Model` guarda os algoritmos, `Controller` cuida de ler o texto da tela e de montar a resposta, `View` só mostra. Assim os algoritmos não dependem da interface e podem ser testados sozinhos.
-- **Estrutura de dados:** a matriz é um array de arrays (`float[][]`) guardado dentro da classe `Matriz`, com atributos privados. Todos os valores são convertidos para `float` no construtor, e as operações devolvem uma nova matriz em vez de alterar a original.
-- **Validação no construtor:** matriz vazia, linhas com tamanhos diferentes e valores que não são números geram `InvalidArgumentException`. Assim nenhuma operação trabalha com dados quebrados.
-- **Exceções próprias:** `DimensoesIncompativeisException` (estende `InvalidArgumentException`) e `MatrizSingularException`, `SistemaImpossivelException`, `SistemaIndeterminadoException` (estendem `DomainException`). O Controller captura `LogicException`, que é a classe pai das duas, e transforma a mensagem em aviso na tela.
-- **Tolerância numérica:** números do tipo `float` têm erro de arredondamento (ex.: `0.1 + 0.2`), então "zero" é qualquer valor com módulo menor que `Matriz::EPSILON = 1e-10`. Nos testes as comparações usam `assertEqualsWithDelta()`.
-- **Sem banco de dados:** o enunciado não exige persistência.
-- **Testes:** os testes do Model testam os algoritmos direto. Os testes do Controller conferem a leitura dos textos, as mensagens de erro e a formatação dos números.
+Também foi implementada a multiplicação de uma matriz por um número, onde cada elemento da matriz é multiplicado pelo valor informado.
 
-## 4. Dificuldades e soluções
+A transposta troca as linhas pelas colunas.
 
-- **Erro de ponto flutuante:** depois da eliminação, valores que deveriam ser 0 ficavam em torno de 1e-16, o que atrapalhava a detecção de matriz singular e de sistema impossível. Resolvido com a constante `EPSILON` e com o pivoteamento parcial.
-- **Diferenciar impossível de indeterminado:** os dois casos aparecem como "linhas zeradas" depois do escalonamento. A diferença está no termo independente: `0 = c` com `c ≠ 0` é impossível, e `0 = 0` com falta de pivôs é indeterminado. A checagem é feita nessa ordem.
-- **Pivô zero:** matrizes como `[[0,1],[1,0]]` quebram a eliminação sem troca de linhas. Foi implementada a troca (com o ajuste de sinal no determinante) e criados testes específicos.
-- **Entrada pelo formulário:** o usuário pode digitar vírgula decimal, linhas em branco ou quebra de linha do Windows. O Controller normaliza o texto antes de criar a matriz.
-- **"-0" na tela:** resultados como `-0.0` apareciam como `-0`. O método `formatarNumero` corrige isso e limita a 4 casas decimais.
-- **Resultado esperado dos testes:** os valores esperados foram calculados à mão (ex.: determinante `-306` da matriz `[[6,1,1],[4,-2,5],[2,8,7]]`) para não depender do próprio código.
+O projeto também possui cálculo de determinante, matriz inversa, matriz identidade e matriz nula.
 
-## 5. Testes e cobertura
+Para calcular o determinante foi utilizado o método de eliminação de Gauss. Já para encontrar a matriz inversa foi utilizado o método de Gauss-Jordan.
 
-Os testes ficam em `tests/` e rodam com `vendor/bin/phpunit`. Os prints da execução e do relatório de cobertura estão em `docs/` (ver README).
+## 4. Sistemas lineares
 
-## 6. Conclusão
+Foram implementadas duas formas de resolver sistemas lineares.
 
-O projeto cobre as operações básicas com matrizes e dois métodos para resolver sistemas lineares, com tratamento de erros e testes automatizados para os casos felizes, de borda e de erro.
+Uma delas utiliza o método de Gauss. Primeiro são feitas as operações necessárias para transformar a matriz em uma forma mais simples e depois são encontrados os valores das incógnitas.
+
+A outra utiliza a matriz inversa. Nesse caso, é necessário que a matriz dos coeficientes tenha uma inversa para que o sistema possa ser resolvido dessa forma.
+
+Também foram feitas verificações para identificar quando um sistema não possui solução ou quando possui várias soluções.
+
+## 5. Tratamento de erros
+
+Durante o desenvolvimento foram criadas algumas exceções para tratar erros específicos.
+
+A `DimensoesIncompativeisException` é usada quando as dimensões das matrizes não permitem realizar determinada operação.
+
+A `MatrizSingularException` é usada quando é tentado calcular a inversa de uma matriz que não possui inversa.
+
+Também foram criadas as exceções `SistemaImpossivelException` e `SistemaIndeterminadoException` para os casos em que o sistema não possui solução ou possui mais de uma solução.
+
+Além disso, existem verificações para evitar que valores inválidos sejam utilizados nos cálculos.
+
+## 6. Testes com PHPUnit
+
+Foram criados testes automatizados para verificar as funções do projeto.
+
+Foram testados os casos normais das operações, mas também situações como matrizes 1x1, matriz identidade, matriz nula e casos em que as dimensões não são compatíveis.
+
+Também foram testados erros relacionados a matrizes singulares e sistemas impossíveis ou indeterminados.
+
+Nos cálculos com números decimais foi utilizado `assertEqualsWithDelta()` para considerar pequenas diferenças causadas pelos cálculos.
+
+Ao todo, a suíte possui 90 testes e 331 assertions, todos passando corretamente.
+
+## 7. Dificuldades durante o desenvolvimento
+
+Uma das dificuldades foi fazer os algoritmos funcionarem corretamente para diferentes tamanhos de matrizes.
+
+Também foi necessário pensar nos casos em que não era possível realizar uma operação, como na multiplicação de matrizes com dimensões incompatíveis ou na tentativa de encontrar a inversa de uma matriz singular.
+
+Outra parte que exigiu atenção foi a criação dos testes, porque não bastava testar somente os resultados corretos. Também foi necessário testar os erros e alguns casos diferentes para garantir que os métodos estavam funcionando.
+
+## 8. Decisões tomadas no projeto
+
+A principal decisão foi separar o projeto em Model, Controller e View. Dessa forma, os cálculos ficam separados da parte visual.
+
+Os algoritmos ficaram principalmente nas classes `Matriz` e `SistemaLinear`, enquanto o Controller ficou responsável por receber os dados da interface e chamar esses métodos.
+
+Também foram utilizadas exceções próprias para facilitar o tratamento dos erros.
+
+O PHPUnit foi escolhido para automatizar os testes e facilitar a verificação dos resultados durante o desenvolvimento.
+
+## 9. Conclusão
+
+Com o desenvolvimento do projeto foi possível colocar em prática os conhecimentos de álgebra linear e programação em PHP.
+
+A aplicação consegue realizar diferentes operações com matrizes e resolver sistemas lineares usando os métodos implementados.
+
+Os testes com PHPUnit também ajudaram a verificar o funcionamento do projeto e encontrar problemas durante o desenvolvimento.
+
+No final, foi possível juntar a parte de matemática com a programação e os testes automatizados em uma única aplicação.

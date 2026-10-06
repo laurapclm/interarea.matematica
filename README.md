@@ -1,122 +1,143 @@
 # Álgebra Linear em PHP
 
-Aplicação web em PHP que implementa operações com matrizes e resolução de sistemas lineares.
-Todos os algoritmos são testados com PHPUnit.
-
-Projeto da atividade interárea do SENAI (estrutura baseada no projeto FitCalc da professora: `Controller`, `Model`, `View`, `tests`).
+Aplicação web desenvolvida em PHP para realizar operações com matrizes e resolver sistemas lineares. O projeto faz parte da atividade interárea do SENAI e foi desenvolvido utilizando uma estrutura baseada no projeto FitCalc da professora, com separação em Controller, Model, View e tests. Todos os algoritmos possuem testes automatizados utilizando PHPUnit.
 
 ## Tecnologias
 
-PHP >= 8.4, HTML5, CSS3, Bootstrap 5, Laravel Herd, PHPUnit 12, Composer, Git e GitHub.
+PHP 8.4, HTML5, CSS3, Bootstrap 5, Laravel Herd, PHPUnit 12, Composer, Git e GitHub.
 
 ## Como instalar e executar
 
-1. Instale o [Laravel Herd](https://herd.laravel.com/) e o Composer.
-2. Clone o repositório dentro da pasta que o Herd monitora (ex.: `~/Herd`):
-   ```bash
-   git clone <link-do-repositorio> algebra-linear
-   cd algebra-linear
-   ```
-3. Instale as dependências:
-   ```bash
-   composer install
-   ```
-4. Abra no navegador o endereço que o Herd criar para a pasta (ex.: `http://algebra-linear.test`).
+É necessário ter o PHP 8.4 ou superior, Composer e Laravel Herd instalados. O projeto não utiliza banco de dados.
 
-Não precisa de banco de dados.
+Para instalar, clone o repositório dentro da pasta monitorada pelo Laravel Herd:
 
-Sem o Herd também funciona com o servidor embutido do PHP:
-```bash
-php -S localhost:8000
-```
+    git clone <link-do-repositorio> algebra-linear
+    cd algebra-linear
+
+Depois instale as dependências:
+
+    composer install
+
+Com o Laravel Herd, abra no navegador o endereço criado para a pasta, por exemplo:
+
+    http://algebra-linear.test
+
+Também é possível executar utilizando o servidor embutido do PHP:
+
+    php -S localhost:8000
+
+Depois acesse:
+
+    http://localhost:8000
 
 ## Como usar a interface
 
-1. Escolha a operação.
-2. Digite a matriz A (uma linha da matriz por linha do campo, números separados por espaço). Também funciona com `;` para separar linhas e vírgula como decimal.
-3. Preencha o campo B quando a operação pedir (outra matriz, um escalar ou o vetor b do sistema).
-4. Clique em **Calcular**.
+Primeiro escolha a operação que deseja realizar. Depois informe a matriz A, colocando uma linha da matriz em cada linha do campo e separando os números por espaços. Quando necessário, informe também a matriz B, um escalar ou o vetor b do sistema. Em seguida, clique em Calcular.
 
-Exemplo de sistema `x + y = 3` e `x - y = 1`:
+Também são aceitos ponto e vírgula para separar linhas e vírgula como separador decimal.
 
-```
-Matriz A:        Vetor b:
-1 1              3 1
-1 -1
-```
-Resultado: `x1 = 2`, `x2 = 1`.
+Um exemplo de sistema linear é:
+
+    x + y = 3
+    x - y = 1
+
+Matriz A:
+
+    1  1
+    1 -1
+
+Vetor b:
+
+    3
+    1
+
+Resultado:
+
+    x1 = 2
+    x2 = 1
 
 ## Algoritmos implementados
 
-| Algoritmo | Onde fica | Observação |
-|---|---|---|
-| Soma e subtração de matrizes | `Matriz::somar`, `Matriz::subtrair` | exige mesmo tamanho |
-| Multiplicação de matrizes | `Matriz::multiplicar` | colunas de A = linhas de B |
-| Multiplicação por escalar | `Matriz::multiplicarPorEscalar` | |
-| Transposta | `Matriz::transpor` | |
-| Determinante | `Matriz::determinante` | eliminação de Gauss com troca de linhas |
-| Inversa | `Matriz::inversa` | Gauss-Jordan sobre `[A \| I]` |
-| Matriz identidade e nula | `Matriz::identidade`, `Matriz::nula` | |
-| Sistema linear por Gauss | `SistemaLinear::resolver` | pivoteamento parcial + substituição regressiva |
-| Sistema linear pela inversa | `SistemaLinear::resolverPorInversa` | x = A⁻¹·b |
+O projeto possui os seguintes algoritmos: soma de matrizes (Matriz::somar), subtração de matrizes (Matriz::subtrair), multiplicação de matrizes (Matriz::multiplicar), multiplicação por escalar (Matriz::multiplicarPorEscalar), matriz transposta (Matriz::transpor), determinante (Matriz::determinante), matriz inversa (Matriz::inversa), matriz identidade (Matriz::identidade), matriz nula (Matriz::nula), resolução de sistemas lineares pelo método de Gauss (SistemaLinear::resolver) e resolução de sistemas pela matriz inversa (SistemaLinear::resolverPorInversa).
 
-Erros tratados com exceções próprias (`Model/Exceptions`): dimensões incompatíveis, matriz singular, sistema impossível e sistema indeterminado.
+A soma e a subtração exigem matrizes com as mesmas dimensões. A multiplicação de matrizes exige que o número de colunas da primeira matriz seja igual ao número de linhas da segunda. O determinante utiliza eliminação de Gauss e troca de linhas quando necessário. A inversa utiliza o método de Gauss-Jordan. A resolução de sistemas por Gauss utiliza pivoteamento parcial e substituição regressiva.
 
-## Estrutura
+## Tratamento de erros
 
-```
-Controller/MatrizController.php   lê os textos da tela e chama os algoritmos
-Model/Matriz.php                  operações com matrizes
-Model/SistemaLinear.php           resolução de sistemas
-Model/Exceptions/                 exceções do projeto
-View/home.php                     tela
-templates/css/style.css           estilo
-tests/                            testes PHPUnit
-docs/                             relatório de cobertura e print dos testes
-index.php                         ponto de entrada
-```
+O projeto possui exceções próprias para tratar situações inválidas, como dimensões incompatíveis, matriz singular, sistema impossível, sistema indeterminado e entradas inválidas. As exceções estão localizadas em Model/Exceptions/.
+
+## Estrutura do projeto
+
+    Controller/
+        MatrizController.php
+
+    Model/
+        Matriz.php
+        SistemaLinear.php
+        Exceptions/
+
+    View/
+        home.php
+
+    tests/
+        Testes automatizados do projeto
+
+    docs/
+        Documentação e relatórios
+
+    index.php
+        Ponto de entrada da aplicação
+
+    composer.json
+        Dependências e configurações do projeto
+
+    phpunit.xml
+        Configuração do PHPUnit
+
+    RELATORIO.md
+        Relatório técnico do projeto
 
 ## Como rodar os testes
 
-```bash
-vendor/bin/phpunit
-```
+Para executar todos os testes automatizados, utilize:
 
-Ou, com saída mais detalhada (nome de cada teste):
-```bash
-vendor/bin/phpunit --testdox
-```
+    vendor/bin/phpunit
 
-Os testes cobrem:
-- casos felizes (resultados calculados à mão);
-- casos de borda (matriz 1x1, identidade, matriz nula, pivô zero);
-- casos de erro (dimensões incompatíveis, matriz singular, sistema impossível/indeterminado, entradas inválidas);
-- precisão numérica com `assertEqualsWithDelta()`.
+Para visualizar os testes com mais detalhes:
+
+    vendor/bin/phpunit --testdox
+
+Os testes verificam casos normais, casos de borda, como matrizes 1x1, identidade e matriz nula, casos de erro, como dimensões incompatíveis, matriz singular, sistema impossível e sistema indeterminado, além de entradas inválidas. Também são utilizados testes de precisão numérica com assertEqualsWithDelta().
+
+Atualmente, a suíte possui 90 testes e 331 assertions, todos passando corretamente.
 
 ## Relatório de cobertura
 
-A cobertura precisa de uma extensão de cobertura (Xdebug ou PCOV) ativa no PHP.
+A cobertura de código é utilizada para verificar quanto do código dos algoritmos foi executado pelos testes. Para gerar o relatório é necessário ter um driver de cobertura, como Xdebug ou PCOV, habilitado no PHP.
 
-```bash
-# relatório no terminal (salvar em docs/)
-XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text > docs/cobertura.txt
+Com o Xdebug habilitado, no PowerShell:
 
-# relatório em HTML (abrir coverage/index.html)
-XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html coverage
-```
+    $env:XDEBUG_MODE="coverage"
+    vendor/bin/phpunit --coverage-text
 
-No Windows (PowerShell): `$env:XDEBUG_MODE="coverage"; vendor/bin/phpunit --coverage-text`.
+Para salvar o relatório em um arquivo dentro da pasta docs:
 
-Coloque aqui o print da execução dos testes e da cobertura (arquivos em `docs/`):
+    $env:XDEBUG_MODE="coverage"
+    vendor/bin/phpunit --coverage-text > docs/cobertura.txt
 
-- `docs/testes.png` (todos os testes passando)
-- `docs/cobertura.txt` ou `docs/cobertura.png`
+Também é possível gerar um relatório em HTML:
+
+    $env:XDEBUG_MODE="coverage"
+    vendor/bin/phpunit --coverage-html coverage
+
+O requisito do projeto é atingir no mínimo 80% de cobertura dos algoritmos.
 
 ## Relatório técnico
 
-Veja [RELATORIO.md](RELATORIO.md).
+O relatório técnico está disponível no arquivo RELATORIO.md. Nele são apresentados a lógica dos algoritmos implementados, a estrutura e organização do projeto, as decisões de design, as estruturas de dados utilizadas, o tratamento de exceções, os testes realizados e as dificuldades encontradas durante o desenvolvimento e suas respectivas soluções.
 
 ## Autores
 
-- Nome 1
-- Nome 2
+- Nome 1 Ariel França Paixão
+- Nome 2 Laura Pereira Cardoso
