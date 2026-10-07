@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-// funçãozinha para comparar matrizes com tolerância (ponto flutuante)
+
 trait ComparaMatriz
 {
     protected function assertMatrizAproximada(array $esperado, array $obtido, float $delta = 1e-9): void

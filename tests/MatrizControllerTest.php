@@ -20,7 +20,7 @@ class MatrizControllerTest extends TestCase
         $this->controller = new MatrizController();
     }
 
-    // ---------- leitura dos textos ----------
+  
 
     #[Test]
     public function deve_ler_matriz_com_quebra_de_linha()
@@ -80,7 +80,7 @@ class MatrizControllerTest extends TestCase
         $this->controller->lerVetor("  ");
     }
 
-    // ---------- operações ----------
+   
 
     #[Test]
     public function deve_somar_pelo_controller()
@@ -159,7 +159,7 @@ class MatrizControllerTest extends TestCase
         $this->assertEqualsWithDelta([2.0, 1.0], $r['resultado'], 1e-9);
     }
 
-    // ---------- erros ----------
+
 
     #[Test]
     public function deve_devolver_erro_com_dimensoes_incompativeis()
@@ -216,7 +216,7 @@ class MatrizControllerTest extends TestCase
         $this->assertNotSame('', $r['mensagem']);
     }
 
-    // ---------- formatação ----------
+ 
 
     #[Test]
     public function deve_formatar_numeros_para_a_tela()

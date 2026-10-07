@@ -15,7 +15,7 @@ class MatrizTest extends TestCase
 {
     use ComparaMatriz;
 
-    // ---------- construção ----------
+
 
     #[Test]
     public function deve_guardar_as_dimensoes_da_matriz()
@@ -100,7 +100,7 @@ class MatrizTest extends TestCase
         Matriz::nula(2, 0);
     }
 
-    // ---------- soma e subtração ----------
+   
 
     #[Test]
     public function deve_somar_duas_matrizes()
@@ -117,7 +117,7 @@ class MatrizTest extends TestCase
         $a = new Matriz([[0.1]]);
         $b = new Matriz([[0.2]]);
 
-        // 0.1 + 0.2 não dá exatamente 0.3 no computador
+ 
         $this->assertEqualsWithDelta(0.3, $a->somar($b)->paraArray()[0][0], 1e-12);
     }
 
@@ -168,7 +168,7 @@ class MatrizTest extends TestCase
         (new Matriz([[1, 2]]))->subtrair(new Matriz([[1], [2]]));
     }
 
-    // ---------- escalar ----------
+    
 
     #[Test]
     public function deve_multiplicar_por_escalar()
@@ -186,7 +186,7 @@ class MatrizTest extends TestCase
         $this->assertMatrizAproximada([[0, 0], [0, 0]], $a->multiplicarPorEscalar(0)->paraArray());
     }
 
-    // ---------- multiplicação ----------
+    
 
     #[Test]
     public function deve_multiplicar_matrizes_quadradas()
@@ -242,7 +242,7 @@ class MatrizTest extends TestCase
         (new Matriz([[1, 2], [3, 4]]))->multiplicar(new Matriz([[1, 2], [3, 4], [5, 6]]));
     }
 
-    // ---------- transposta ----------
+   
 
     #[Test]
     public function deve_transpor_matriz_retangular()
@@ -266,7 +266,7 @@ class MatrizTest extends TestCase
         $this->assertMatrizAproximada([[7]], (new Matriz([[7]]))->transpor()->paraArray());
     }
 
-    // ---------- determinante ----------
+    
 
     #[Test]
     public function deve_calcular_determinante_2x2()
@@ -311,7 +311,7 @@ class MatrizTest extends TestCase
     #[Test]
     public function determinante_deve_trocar_o_sinal_quando_troca_linhas()
     {
-        // o pivô da primeira coluna é zero, então precisa trocar as linhas
+       
         $this->assertEqualsWithDelta(-1.0, (new Matriz([[0, 1], [1, 0]]))->determinante(), 1e-9);
     }
 
@@ -322,7 +322,7 @@ class MatrizTest extends TestCase
         (new Matriz([[1, 2, 3], [4, 5, 6]]))->determinante();
     }
 
-    // ---------- inversa ----------
+    
 
     #[Test]
     public function deve_calcular_inversa_2x2()
